@@ -24,10 +24,10 @@ namespace CursoEFCore
 
             //InserirDados();
             //InserirDadosEmMassa();
-            ConsultarDados();
+            //ConsultarDados();
             //CadastrarPedido();
             //ConsultarPedidoCarregamentoAdiantado();
-            //AtualizarDados();
+            AtualizarDados();
             //RemoverRegistro();
         }
 
@@ -35,36 +35,44 @@ namespace CursoEFCore
         {
             using var db = new Data.ApplicationContext();
 
-            //var cliente = db.Clientes.Find(2);
-            var cliente = new Cliente { Id = 3 };
-            //db.Clientes.Remove(cliente);
-            //db.Remove(cliente);
-            db.Entry(cliente).State = EntityState.Deleted;
+            var cliente = db.Clientes.Find(2);
 
-            db.SaveChanges();
+            if (cliente != null)
+            {
+                db.Entry(cliente).State = EntityState.Deleted;
+                db.SaveChanges();
+                Console.WriteLine($"Cliente {cliente.Nome}, excluído com sucesso!");
+            }
+            else
+            {
+                Console.WriteLine("Cliente não localizado!");
+            }
         }
 
         private static void AtualizarDados()
         {
             using var db = new Data.ApplicationContext();
-            //var cliente = db.Clientes.Find(1);
+            var cliente = db.Clientes.Find(4);
 
-            var cliente = new Cliente
+            if (cliente != null)
             {
-                Id = 1
-            };
+                var clienteDesconectado = new
+                {
+                    Nome = "Fernando Mendes",
+                    Telefone = "11993936885"
+                };
 
-            var clienteDesconectado = new
+                db.Attach(cliente);
+                db.Entry(cliente).CurrentValues.SetValues(clienteDesconectado);
+
+                db.SaveChanges();
+                Console.WriteLine($"Cliente {cliente.Nome}, atualizado com sucesso!");
+            }
+            else
             {
-                Nome = "Cliente Desconectado Passo 3",
-                Telefone = "7966669999"
-            };
+                Console.WriteLine("Cliente não localizado!");
+            }
 
-            db.Attach(cliente);
-            db.Entry(cliente).CurrentValues.SetValues(clienteDesconectado);
-
-            //db.Clientes.Update(cliente);
-            db.SaveChanges();
         }
 
         private static void ConsultarPedidoCarregamentoAdiantado()
@@ -76,7 +84,7 @@ namespace CursoEFCore
                 .ThenInclude(p => p.Produto)
                 .ToList();
 
-            Console.WriteLine(pedidos.Count);
+            Console.WriteLine($"Quantidades de pedidos: {pedidos.Count}");
         }
 
         private static void CadastrarPedido()
@@ -117,12 +125,12 @@ namespace CursoEFCore
             var consultaPorSintaxe = (from c in db.Clientes where c.Id>0 select c).ToList();
             var consultaPorMetodo = db.Clientes
                 .Where(p => p.Id > 0)
-                .OrderBy(p => p.Id)
+                .OrderBy(p => p.Nome)
                 .ToList();
 
             foreach (var cliente in consultaPorMetodo)
             {
-                Console.WriteLine($"Consultando Cliente: {cliente.Id}");
+                Console.WriteLine($"Consultando Cliente: {cliente.Nome}");
                 //db.Clientes.Find(cliente.Id);
                 db.Clientes.FirstOrDefault(p => p.Id == cliente.Id);
             }
