@@ -23,8 +23,8 @@ namespace CursoEFCore
             }*/
 
             //InserirDados();
-            InserirDadosEmMassa();
-            //ConsultarDados();
+            //InserirDadosEmMassa();
+            ConsultarDados();
             //CadastrarPedido();
             //ConsultarPedidoCarregamentoAdiantado();
             //AtualizarDados();
@@ -73,7 +73,7 @@ namespace CursoEFCore
             var pedidos = db
                 .Pedidos
                 .Include(p => p.Itens)
-                    .ThenInclude(p => p.Produto)
+                .ThenInclude(p => p.Produto)
                 .ToList();
 
             Console.WriteLine(pedidos.Count);
@@ -114,8 +114,9 @@ namespace CursoEFCore
         private static void ConsultarDados()
         {
             using var db = new Data.ApplicationContext();
-            //var consultaPorSintaxe = (from c in db.Clientes where c.Id>0 select c).ToList();
+            var consultaPorSintaxe = (from c in db.Clientes where c.Id>0 select c).ToList();
             var consultaPorMetodo = db.Clientes
+                .AsNoTracking()
                 .Where(p => p.Id > 0)
                 .OrderBy(p => p.Id)
                 .ToList();
@@ -123,8 +124,8 @@ namespace CursoEFCore
             foreach (var cliente in consultaPorMetodo)
             {
                 Console.WriteLine($"Consultando Cliente: {cliente.Id}");
-                //db.Clientes.Find(cliente.Id);
-                db.Clientes.FirstOrDefault(p => p.Id == cliente.Id);
+                db.Clientes.Find(cliente.Id);
+                //db.Clientes.FirstOrDefault(p => p.Id == cliente.Id);
             }
         }
 
@@ -152,11 +153,11 @@ namespace CursoEFCore
             {
                 new Cliente
                 {
-                    Nome = "Teste 1",
-                    CEP = "99999000",
-                    Cidade = "Itabaiana",
-                    Estado = "SE",
-                    Telefone = "99000001115",
+                    Nome = "Antonio Bruno",
+                    CEP = "09720470",
+                    Cidade = "São Bernardo do Campo",
+                    Estado = "SP",
+                    Telefone = "11993936877",
                 },
                 new Cliente
                 {
@@ -170,9 +171,9 @@ namespace CursoEFCore
 
 
             using var db = new Data.ApplicationContext();
-            db.AddRange(produto, cliente);
+            //db.AddRange(produto, cliente);
             //db.Set<Cliente>().AddRange(listaClientes);
-            //db.Clientes.AddRange(listaClientes);
+            db.Clientes.AddRange(listaClientes);
 
             var registros = db.SaveChanges();
             Console.WriteLine($"Total Registro(s): {registros}");
