@@ -116,7 +116,6 @@ namespace CursoEFCore
             using var db = new Data.ApplicationContext();
             var consultaPorSintaxe = (from c in db.Clientes where c.Id>0 select c).ToList();
             var consultaPorMetodo = db.Clientes
-                .AsNoTracking()
                 .Where(p => p.Id > 0)
                 .OrderBy(p => p.Id)
                 .ToList();
@@ -124,8 +123,8 @@ namespace CursoEFCore
             foreach (var cliente in consultaPorMetodo)
             {
                 Console.WriteLine($"Consultando Cliente: {cliente.Id}");
-                db.Clientes.Find(cliente.Id);
-                //db.Clientes.FirstOrDefault(p => p.Id == cliente.Id);
+                //db.Clientes.Find(cliente.Id);
+                db.Clientes.FirstOrDefault(p => p.Id == cliente.Id);
             }
         }
 
